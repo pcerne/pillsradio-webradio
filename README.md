@@ -34,6 +34,24 @@ Le squelette est prêt ; il reste à brancher le vrai contenu.
 3. **Émissions** (`#emissions`) : remplacer les vignettes dégradées par les vraies pochettes des émissions.
 4. **Histoire** (`#histoire`) : le texte sur papy tango est une amorce neutre, à remplacer par la vraie histoire de la station. Remplacer aussi la photo d'illustration (actuellement une photo de bibliothèque, créditée en pied de page) par une vraie photo.
 
+## Mise en ligne
+
+Hébergé sur GitHub Pages, déployé par GitHub Actions (`.github/workflows/deploy.yml`) : chaque push sur `master` reconstruit et publie le site.
+
+- URL technique : https://pcerne.github.io/pillsradio-webradio/
+- Dépôt : https://github.com/pcerne/pillsradio-webradio
+
+### Basculer sur `pillsradio.fr` (cutover, à faire quand prêt)
+
+`pillsradio.fr` est un domaine apex. Tant que le DNS pointe sur l'ancien hébergeur, ne pas activer le domaine côté GitHub (sinon l'URL github.io redirige vers l'ancien site et le nouveau devient introuvable).
+
+1. Chez le registrar DNS (Gandi), pour `@` (apex), remplacer les enregistrements actuels par les IP GitHub Pages :
+   - A : `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
+   - AAAA : `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153`
+   - (optionnel) `www` en CNAME vers `pcerne.github.io.`
+2. Quand le DNS est propagé, activer le domaine : créer un fichier `CNAME` à la racine contenant `pillsradio.fr`, committer, pousser. (ou `gh api -X PUT repos/pcerne/pillsradio-webradio/pages -f cname=pillsradio.fr`)
+3. GitHub émet le certificat TLS automatiquement ; forcer le HTTPS dans Settings → Pages.
+
 ## Fichiers
 
 | Fichier | Rôle |
