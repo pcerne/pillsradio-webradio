@@ -1,0 +1,8 @@
+.DS_Store
+*.log
+node_modules/
+
+# espace de travail local / outillage, hors site
+.kandev/
+.kandev-workspace.json
+.hallmark/

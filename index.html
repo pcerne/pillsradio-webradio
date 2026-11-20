@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PillsRadio, la radio en direct</title>
+  <meta name="description" content="Le flux en direct de PillsRadio : la pilule eklektik, le programme, les émissions et l'histoire de la station.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500&family=Onest:wght@400&display=swap" rel="stylesheet">
+  <link href="./styles.css" rel="stylesheet">
+</head>
+<body>
+  <main>
+    <!-- hero : plein cadre, image de fond, player centré -->
+    <section class="hero" id="top">
+      <div class="hero__bg" aria-hidden="true">
+        <img src="https://radio.pillsradio.fr/static/uploads/pillsradio/background.1794495737.jpg" alt="" loading="eager" fetchpriority="high">
+      </div>
+
+      <header class="topbar">
+        <div class="container topbar__row">
+          <a class="wordmark" href="#top"><span class="wordmark__dot" aria-hidden="true"></span>pillsradio</a>
+          <span class="pill pill--live">en direct</span>
+        </div>
+      </header>
+
+      <div class="hero__center">
+        <h1 class="visually-hidden">pillsradio, la radio en direct</h1>
+        <div class="player settle" id="player">
+          <div class="player__art" id="np-art" role="img" aria-label="pochette du titre en cours"></div>
+          <div class="player__body">
+            <div class="player__top">
+              <span class="pill pill--live">en direct</span>
+              <span class="player__listeners" id="np-listeners">en ligne</span>
+            </div>
+            <div class="player__show" id="np-show">la pilule eklektik</div>
+            <div class="player__track" id="np-title">en direct</div>
+            <div class="player__artist" id="np-artist">pillsradio</div>
+            <div class="player__controls">
+              <button class="play" id="play" type="button" aria-label="écouter pillsradio en direct" aria-pressed="false">
+                <svg class="play__icon" viewBox="0 0 24 24" aria-hidden="true"><path class="play__play" d="M7 4l13 8-13 8z"/><path class="play__pause" d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+              </button>
+              <div class="eq" id="eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+              <span class="player__status" id="play-status">appuyez pour écouter</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a class="hero__scroll" href="#direct">découvrir la radio<span class="hero__scroll-arrow" aria-hidden="true">↓</span></a>
+    </section>
+
+    <!-- derniers titres : première info au scroll -->
+    <section class="section section--tight" id="direct">
+      <div class="container direct">
+        <div class="direct__head">
+          <h2>ce qui passe</h2>
+          <span class="panel__listeners">les derniers titres joués</span>
+        </div>
+        <ol class="recent" id="recent">
+          <li class="recent__item"><span class="recent__title">la pilule eklektik</span><span class="recent__artist">pillsradio</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- c'est quoi ce titre ? recherche par date/heure -->
+    <section class="section section--tight" id="titre">
+      <div class="container">
+        <h2>c’est quoi ce titre ?</h2>
+        <p class="prog__intro">un morceau vous a marqué à un moment précis ? indiquez le jour et l’heure, on retrouve ce qui passait à l’antenne.</p>
+        <form class="finder" id="finder">
+          <label class="finder__field"><span class="label">jour</span><input type="date" id="finder-date" required></label>
+          <label class="finder__field"><span class="label">heure</span><input type="time" id="finder-time" required></label>
+          <button class="btn btn--primary" type="submit">retrouver le titre</button>
+        </form>
+        <div class="finder__result" id="finder-result" hidden aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- app / device-aware -->
+    <section class="section apps" id="app">
+      <div class="container">
+        <h2>emportez la radio</h2>
+        <div class="apps__grid">
+          <div class="app-card app-card--android">
+            <span class="pill app-card__suited">conseillé sur android</span>
+            <div class="app-card__head">l’application android</div>
+            <p>installez l’appli pillsradio : le flux en direct, le titre en cours et la lecture en arrière-plan.</p>
+            <div class="app-card__actions">
+              <a class="btn btn--primary" id="android-link" href="#">installer l’application</a>
+            </div>
+          </div>
+          <div class="app-card app-card--ios">
+            <span class="pill app-card__suited">conseillé sur iphone</span>
+            <div class="app-card__head">la web app iphone</div>
+            <p>ajoutez pillsradio à l’écran d’accueil : elle s’ouvre comme une appli, sans passer par l’app store.</p>
+            <div class="app-card__actions">
+              <a class="btn btn--primary" id="ios-link" href="#">ouvrir la web app</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- programme -->
+    <section class="section" id="programme">
+      <div class="container">
+        <h2>la programmation</h2>
+        <p class="prog__intro">des disques choisis à l’oreille, sans format imposé, du réveil jusqu’au bout de la nuit. la grille se met à jour en direct depuis l’antenne.</p>
+        <table class="prog__table">
+          <thead>
+            <tr><th scope="col">quand</th><th scope="col">émission</th></tr>
+          </thead>
+          <tbody id="prog-body">
+            <tr><td class="prog__time">en direct</td><td><div class="prog__show">chargement de la grille…</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- émissions -->
+    <section class="section section--tight" id="emissions">
+      <div class="container">
+        <h2>les émissions</h2>
+        <div class="rail">
+          <article class="show show--feature">
+            <div class="show__cover"><span class="show__title">papy tango</span></div>
+            <div class="show__body"><div class="show__name">papy tango</div><div class="show__meta">tous les soirs, 18:00</div></div>
+          </article>
+          <article class="show">
+            <div class="show__cover"><span class="show__title">réveil</span></div>
+            <div class="show__body"><div class="show__name">réveil eklektik</div><div class="show__meta">en semaine, 07:00</div></div>
+          </article>
+          <article class="show">
+            <div class="show__cover"><span class="show__title">libre antenne</span></div>
+            <div class="show__body"><div class="show__name">libre antenne</div><div class="show__meta">en semaine, 21:00</div></div>
+          </article>
+          <article class="show">
+            <div class="show__cover"><span class="show__title">nuit continue</span></div>
+            <div class="show__body"><div class="show__name">nuit continue</div><div class="show__meta">toutes les nuits, 00:00</div></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- histoire -->
+    <section class="section" id="histoire">
+      <div class="container story__grid">
+        <div class="story__photo" data-slot="histoire" data-alt="une main sur les faders d'une console de mixage">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Larry_Crane_mixing_on_Rupert_Neve_Designs_5088_console%2C_Jackpot%21_Recording_Studio_%28Portland%2C_Oregon%29.jpg/1280px-Larry_Crane_mixing_on_Rupert_Neve_Designs_5088_console%2C_Jackpot%21_Recording_Studio_%28Portland%2C_Oregon%29.jpg" alt="une main sur les faders d'une console de mixage" width="2288" height="1712" style="object-position: 45% 35%">
+        </div>
+        <div class="story__body">
+          <h2>papy tango</h2>
+          <p>papy tango a donné le ton à la station : des disques choisis à l’oreille, une voix qui connaît ses classiques, une sélection qu’on ne retrouve nulle part ailleurs.</p>
+          <p>pillsradio en a gardé l’esprit. une rotation libre, sans format imposé, qui tourne jour et nuit pour celles et ceux qui cherchent autre chose.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- footer -->
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div class="footer__col">
+        <a class="wordmark" href="#top"><span class="wordmark__dot" aria-hidden="true"></span>pillsradio</a>
+        <p class="footer__blurb">la radio en direct, la pilule eklektik, jour et nuit.</p>
+      </div>
+      <div class="footer__col">
+        <h3>écouter</h3>
+        <ul>
+          <li><a href="https://radio.pillsradio.fr/listen/pillsradio/radio.mp3">flux en direct (mp3)</a></li>
+          <li><a href="https://radio.pillsradio.fr/public/pillsradio/playlist.pls">fichier .pls</a></li>
+          <li><a href="https://radio.pillsradio.fr/public/pillsradio/playlist.m3u">fichier .m3u</a></li>
+          <li><a href="https://radio.pillsradio.fr/public/pillsradio">player azuracast</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h3>la station</h3>
+        <ul>
+          <li><a href="#programme">programme</a></li>
+          <li><a href="#emissions">émissions</a></li>
+          <li><a href="#histoire">histoire</a></li>
+          <li><a href="https://pillsradio.fr">pillsradio.fr</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h3>l’app</h3>
+        <ul>
+          <li><a href="#app" id="footer-android">application android</a></li>
+          <li><a href="#app" id="footer-ios">web app iphone</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <p class="footer__credits">Photographie de la section histoire : <a href="https://commons.wikimedia.org/wiki/File:Larry_Crane_mixing_on_Rupert_Neve_Designs_5088_console,_Jackpot!_Recording_Studio_(Portland,_Oregon).jpg">VACANT FEVER</a> (CC BY-SA 2.0, Wikimedia Commons).</p>
+    </div>
+  </footer>
+
+  <!-- slot fallback cleanup -->
+  <script>
+    document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });
+  </script>
+
+  <!-- device detection + live history -->
+  <script>
+    (function () {
+      'use strict';
+
+      // ---- à renseigner ----
+      var APP_ANDROID_URL = '';          // lien Play Store ou .apk
+      var IOS_WEBAPP_URL  = '';          // web app iphone (créée dans l'autre fil)
+      var AZURACAST_API_KEY = '';        // clé API azuracast pour "c'est quoi ce titre" (sinon la recherche reste désactivée)
+
+      var API_BASE   = 'https://radio.pillsradio.fr';
+      var STATION    = 'pillsradio';
+      var NOWPLAYING = API_BASE + '/api/nowplaying/' + STATION;
+      var SCHEDULE   = API_BASE + '/api/station/' + STATION + '/schedule';
+      var STREAM_URL = API_BASE + '/listen/' + STATION + '/radio.mp3';
+
+      // ---- device detection ----
+      var ua = navigator.userAgent || '';
+      var isAndroid = /android/i.test(ua);
+      var isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      document.documentElement.dataset.device = isAndroid ? 'android' : isIOS ? 'ios' : 'desktop';
+
+      function wire(id, url, fallbackHash) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.setAttribute('href', url || fallbackHash);
+        if (!url) { el.setAttribute('aria-disabled', 'true'); el.title = 'lien à renseigner'; }
+      }
+      wire('android-link', APP_ANDROID_URL, '#app');
+      wire('ios-link', IOS_WEBAPP_URL, '#app');
+      wire('footer-android', APP_ANDROID_URL, '#app');
+      wire('footer-ios', IOS_WEBAPP_URL, '#app');
+
+      // ---- lecteur audio ----
+      var playerEl = document.getElementById('player');
+      var playBtn = document.getElementById('play');
+      var playStatus = document.getElementById('play-status');
+      var audio = new Audio();
+      audio.preload = 'none';
+
+      function setPlaying(on) {
+        playerEl.classList.toggle('is-playing', on);
+        playBtn.setAttribute('aria-pressed', String(on));
+        playStatus.textContent = on ? 'en direct' : 'appuyez pour écouter';
+      }
+      playBtn.addEventListener('click', function () {
+        if (audio.paused) {
+          audio.src = STREAM_URL;   // (re)charge le flux au lancement
+          var p = audio.play();
+          if (p && p.catch) p.catch(function () { setPlaying(false); playStatus.textContent = 'lecture impossible'; });
+          setPlaying(true);
+          playStatus.textContent = 'connexion…';
+        } else {
+          audio.pause();
+        }
+      });
+      audio.addEventListener('playing', function () { setPlaying(true); });
+      audio.addEventListener('pause', function () { setPlaying(false); });
+      audio.addEventListener('waiting', function () { playStatus.textContent = 'mise en mémoire…'; });
+
+      // ---- titre en cours, émission, derniers titres, auditeurs (API azuracast) ----
+      var elTitle = document.getElementById('np-title');
+      var elArtist = document.getElementById('np-artist');
+      var elArt = document.getElementById('np-art');
+      var elShow = document.getElementById('np-show');
+      var elListeners = document.getElementById('np-listeners');
+      var elRecent = document.getElementById('recent');
+
+      function listenersLabel(n) {
+        return n <= 0 ? 'personne à l’écoute' : n + (n > 1 ? ' auditeurs' : ' auditeur');
+      }
+
+      function row(song) {
+        var li = document.createElement('li');
+        li.className = 'recent__item';
+        var t = document.createElement('span'); t.className = 'recent__title'; t.textContent = song.title || 'titre';
+        var a = document.createElement('span'); a.className = 'recent__artist'; a.textContent = song.artist || '';
+        li.appendChild(t); li.appendChild(a);
+        return li;
+      }
+
+      function refresh() {
+        fetch(NOWPLAYING, { cache: 'no-store' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            if (!d) return;
+            var np = d.now_playing && d.now_playing.song;
+            if (np) {
+              if (np.title) elTitle.textContent = np.title;
+              elArtist.textContent = np.artist || 'pillsradio';
+              if (np.art) { elArt.style.backgroundImage = 'url("' + np.art + '")'; elArt.setAttribute('aria-label', (np.title || 'titre en cours') + ', pochette'); }
+            }
+            if (d.now_playing && d.now_playing.playlist) elShow.textContent = String(d.now_playing.playlist).toLowerCase();
+            if (d.listeners && typeof d.listeners.current === 'number') elListeners.textContent = listenersLabel(d.listeners.current);
+            var items = [];
+            if (Array.isArray(d.song_history)) {
+              d.song_history.slice(0, 4).forEach(function (h) { if (h && h.song) items.push(h.song); });
+            }
+            if (!items.length) return;
+            elRecent.textContent = '';
+            items.slice(0, 4).forEach(function (s) { elRecent.appendChild(row(s)); });
+          })
+          .catch(function () {});
+      }
+      refresh();
+      setInterval(refresh, 20000);
+
+      // ---- grille de programmation (schedule public) ----
+      var progBody = document.getElementById('prog-body');
+
+      function dayLabel(ts) {
+        var d = new Date(ts * 1000), now = new Date();
+        var same = function (a, b) { return a.toDateString() === b.toDateString(); };
+        if (same(d, now)) return 'aujourd’hui';
+        if (same(d, new Date(now.getTime() + 86400000))) return 'demain';
+        return d.toLocaleDateString('fr-FR', { weekday: 'long' });
+      }
+      function hhmm(ts) { return new Date(ts * 1000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
+
+      function fillSchedule() {
+        fetch(SCHEDULE, { cache: 'no-store' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (list) {
+            if (!Array.isArray(list) || !list.length) return;
+            list.sort(function (a, b) { return a.start_timestamp - b.start_timestamp; });
+            progBody.textContent = '';
+            list.forEach(function (s) {
+              var tr = document.createElement('tr');
+              if (s.is_now) tr.className = 'prog__row--feature';
+              var td1 = document.createElement('td'); td1.className = 'prog__time';
+              td1.textContent = dayLabel(s.start_timestamp) + ' · ' + hhmm(s.start_timestamp) + '–' + hhmm(s.end_timestamp);
+              var td2 = document.createElement('td');
+              var show = document.createElement('div'); show.className = 'prog__show';
+              show.textContent = (s.name || 'émission').toLowerCase();
+              td2.appendChild(show);
+              if (s.is_now) { var p = document.createElement('p'); p.className = 'prog__note'; p.textContent = 'en ce moment à l’antenne'; td2.appendChild(p); }
+              tr.appendChild(td1); tr.appendChild(td2); progBody.appendChild(tr);
+            });
+          })
+          .catch(function () {});
+      }
+      fillSchedule();
+      setInterval(fillSchedule, 120000);
+
+      // ---- "c'est quoi ce titre ?" : titre joué à une date/heure ----
+      var finder = document.getElementById('finder');
+      var fDate = document.getElementById('finder-date');
+      var fTime = document.getElementById('finder-time');
+      var fResult = document.getElementById('finder-result');
+
+      (function initFinder() {
+        var now = new Date();
+        var pad = function (n) { return String(n).padStart(2, '0'); };
+        fDate.value = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+        fTime.value = pad(now.getHours()) + ':' + pad(now.getMinutes());
+        fDate.max = fDate.value; // pas de futur
+      })();
+
+      function msg(text) { fResult.hidden = false; fResult.innerHTML = ''; var p = document.createElement('p'); p.className = 'finder__msg'; p.textContent = text; fResult.appendChild(p); }
+
+      function showResult(item, target) {
+        fResult.hidden = false; fResult.innerHTML = '';
+        var card = document.createElement('div'); card.className = 'result-card';
+        var art = document.createElement('div'); art.className = 'result-card__art';
+        if (item.song && item.song.art) art.style.backgroundImage = 'url("' + item.song.art + '")';
+        var meta = document.createElement('div'); meta.className = 'result-card__meta';
+        var title = document.createElement('div'); title.className = 'result-card__title'; title.textContent = (item.song && item.song.title) || 'titre inconnu';
+        var artist = document.createElement('div'); artist.className = 'result-card__artist'; artist.textContent = (item.song && item.song.artist) || '';
+        var when = document.createElement('div'); when.className = 'result-card__when';
+        var at = new Date(item.played_at * 1000);
+        var show = item.playlist ? ' · ' + item.playlist : '';
+        when.textContent = 'à l’antenne le ' + at.toLocaleDateString('fr-FR') + ' à ' + at.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) + show;
+        meta.appendChild(title); meta.appendChild(artist); meta.appendChild(when);
+        card.appendChild(art); card.appendChild(meta); fResult.appendChild(card);
+      }
+
+      finder.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!AZURACAST_API_KEY) { msg('recherche à activer : renseignez une clé API azuracast dans le script (variable AZURACAST_API_KEY).'); return; }
+        if (!fDate.value || !fTime.value) { msg('indiquez un jour et une heure.'); return; }
+        var target = new Date(fDate.value + 'T' + fTime.value);
+        if (isNaN(target.getTime())) { msg('date ou heure invalide.'); return; }
+        if (target.getTime() > Date.now()) { msg('ce moment n’est pas encore passé.'); return; }
+        var sec = Math.floor(target.getTime() / 1000);
+        var start = new Date((sec - 3 * 3600) * 1000).toISOString();
+        var end = new Date((sec + 3600) * 1000).toISOString();
+        msg('recherche en cours…');
+        fetch(API_BASE + '/api/station/' + STATION + '/history?start=' + encodeURIComponent(start) + '&end=' + encodeURIComponent(end), {
+          headers: { 'X-API-Key': AZURACAST_API_KEY }, cache: 'no-store'
+        })
+          .then(function (r) { if (r.status === 403 || r.status === 401) throw new Error('auth'); return r.ok ? r.json() : null; })
+          .then(function (list) {
+            if (!Array.isArray(list) || !list.length) { msg('rien trouvé à ce moment-là dans l’historique.'); return; }
+            // trie par played_at croissant, prend le dernier titre démarré avant la cible
+            list.sort(function (a, b) { return a.played_at - b.played_at; });
+            var match = null;
+            for (var i = 0; i < list.length; i++) {
+              if (list[i].played_at <= sec) match = list[i]; else break;
+            }
+            if (!match) match = list[0];
+            showResult(match, target);
+          })
+          .catch(function (err) {
+            if (err && err.message === 'auth') msg('clé API refusée par azuracast : vérifiez la variable AZURACAST_API_KEY.');
+            else msg('historique indisponible pour le moment.');
+          });
+      });
+    })();
+  </script>
+</body>
+</html>
