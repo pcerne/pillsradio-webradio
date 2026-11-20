@@ -1,7 +1,20 @@
 # pillsradio — site webradio
 
-Site statique dédié à la webradio **PillsRadio**, distinct du site vitrine `pillsradio.fr`.
+Site statique dédié à la webradio **PillsRadio**.
 Il remplace la page AzuraCast par défaut (`radio.pillsradio.fr/public/pillsradio`) par quelque chose de plus soigné : player en direct, programme, émissions, histoire (papy tango).
+
+## Prérequis — hébergement (lire avant de déployer)
+
+> Source de vérité : `~/perso/migration` (voir `docs/audit-2026-11-18.md` et `docs/url-scheme.md`).
+
+L'infra pillsradio est **auto-hébergée**, pas sur un PaaS :
+
+- Serveur en cours de migration **Scaleway Dedibox `51.15.5.136` → OVH `217.182.192.17`** (à finir avant fin nov. 2026).
+- Reverse proxy **nginx** (Dedibox) puis **Caddy** (OVH, config-as-truth repo `pillsbox-stack`), TLS Let's Encrypt automatique. Les sites statiques sont servis depuis `/var/www/<site>`.
+- **Déploiement = rsync over SSH** vers `pills@pillsradio.fr`, suivant la convention `~/perso/debian-vps-config/sites/pillsradio-accueil/deploy.sh` (`rsync -av --delete ./ pills@…:/var/www/<cible>/`). Pas de sudo.
+- **Cible de ce site** : l'**apex `pillsradio.fr` = la webradio** (décision du 18/11, `docs/url-scheme.md`) ; `radio.pillsradio.fr` → 301 vers l'apex ; l'ancienne page d'accueil part sur `home.pillsradio.fr`.
+
+Conséquence : **GitHub Pages n'est pas la cible** (c'est juste un aperçu temporaire). Le déploiement réel se fait sur le serveur (Caddy), comme les autres sites. Servi sous `pillsradio.fr`, le site devient **same-origin** avec AzuraCast, ce qui permet un **proxy serveur** pour cacher `AZURACAST_API_KEY` (fonction « c'est quoi ce titre »).
 
 ## Contenu
 
@@ -36,21 +49,19 @@ Le squelette est prêt ; il reste à brancher le vrai contenu.
 
 ## Mise en ligne
 
-Hébergé sur GitHub Pages, déployé par GitHub Actions (`.github/workflows/deploy.yml`) : chaque push sur `master` reconstruit et publie le site.
+Dépôt source (versionnement) : https://github.com/pcerne/pillsradio-webradio
+Aperçu temporaire GitHub Pages : https://pcerne.github.io/pillsradio-webradio/ (à retirer une fois le déploiement serveur en place).
 
-- URL technique : https://pcerne.github.io/pillsradio-webradio/
-- Dépôt : https://github.com/pcerne/pillsradio-webradio
+**Cible réelle : le serveur (Caddy sur OVH), apex `pillsradio.fr`.** Deux options :
 
-### Basculer sur `pillsradio.fr` (cutover, à faire quand prêt)
+1. Convention du projet (comme `pillsradio-accueil`) : un `deploy.sh` qui fait
+   `rsync -av --delete ./ pills@pillsradio.fr:/var/www/webradio/`, le vhost Caddy servant ce dossier sur l'apex. Déploiement manuel ou via un hook.
+2. CI vers le serveur : adapter `.github/workflows/deploy.yml` pour pousser par `rsync`/`scp` sur le serveur (clé de déploiement en secret GitHub) au lieu de Pages.
 
-`pillsradio.fr` est un domaine apex. Tant que le DNS pointe sur l'ancien hébergeur, ne pas activer le domaine côté GitHub (sinon l'URL github.io redirige vers l'ancien site et le nouveau devient introuvable).
-
-1. Chez le registrar DNS (Gandi), pour `@` (apex), remplacer les enregistrements actuels par les IP GitHub Pages :
-   - A : `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
-   - AAAA : `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153`
-   - (optionnel) `www` en CNAME vers `pcerne.github.io.`
-2. Quand le DNS est propagé, activer le domaine : créer un fichier `CNAME` à la racine contenant `pillsradio.fr`, committer, pousser. (ou `gh api -X PUT repos/pcerne/pillsradio-webradio/pages -f cname=pillsradio.fr`)
-3. GitHub émet le certificat TLS automatiquement ; forcer le HTTPS dans Settings → Pages.
+À faire au moment du branchement :
+- poser le vhost Caddy de l'apex vers le dossier du site (dans `pillsbox-stack`), avec `radio.` → 301 vers l'apex ;
+- ajouter un **proxy serveur** pour l'historique AzuraCast (garde `AZURACAST_API_KEY` côté serveur, le JS appelle une route locale type `/api/history`) ;
+- le DNS de l'apex pointe déjà (ou pointera) sur l'IP OVH `217.182.192.17` dans le cadre de la migration — pas de config DNS GitHub.
 
 ## Fichiers
 
